@@ -139,7 +139,7 @@ M2Lib::EError M2Lib::M2::Load(const wchar_t* FileName)
 		uint32_t Size;
 	};
 
-	std::map<EM2Chunk, PostChunkInfo> PostProcessChunks;
+	std::unordered_map<EM2Chunk, PostChunkInfo> PostProcessChunks;
 
 	while (FileStream.tellg() < FileSize)
 	{
@@ -872,7 +872,7 @@ M2Lib::EError M2Lib::M2::ExportM2Intermediate(wchar_t const* FileName)
 		DataBinary.Write<int32_t>(-1);				// shader id
 		DataBinary.Write<int16_t>(-1);				// blend type
 		DataBinary.Write<uint16_t>(0);				// render flags
-		
+
 		for (uint32_t j = 0; j < MAX_SUBMESH_TEXTURES; ++j)
 		{
 			DataBinary.Write<uint16_t>(-1);			// texture type
@@ -1947,7 +1947,7 @@ bool M2Lib::M2::GetFileSkeleton(std::wstring& SkeletonFileNameResultBuffer, std:
 		}
 		return true;
 	}
-	
+
 	SkeletonFileNameResultBuffer.resize(1024);
 	sLogger.LogWarning(L"Warning: skeleton FileDataId [%u] not found in listfile! Listfile is not up to date! Trying default skeleton name", chunk->SkeletonFileDataId);
 	std::swprintf((wchar_t*)SkeletonFileNameResultBuffer.data(),
@@ -2131,7 +2131,7 @@ M2Lib::DataElement* M2Lib::M2::GetAnimations()
 		return &animationChunk->Elements[SKS1Chunk::EElement_Animation];
 	if (auto animationChunk = ParentSkeleton ? (SKS1Chunk*)ParentSkeleton->GetChunk(ESkeletonChunk::SKS1) : NULL)
 		return &animationChunk->Elements[SKS1Chunk::EElement_Animation];
-		
+
 	return &Elements[EElement_Animation];
 }
 
@@ -2167,7 +2167,7 @@ M2Lib::DataElement* M2Lib::M2::GetBoneLookups()
 		return &boneChunk->Elements[SKB1Chunk::EElement_KeyBoneLookup];
 	if (auto boneChunk = ParentSkeleton ? (SKB1Chunk*)ParentSkeleton->GetChunk(ESkeletonChunk::SKB1) : NULL)
 		return &boneChunk->Elements[SKB1Chunk::EElement_KeyBoneLookup];
-		
+
 	return &Elements[EElement_KeyBoneLookup];
 }
 
@@ -2179,7 +2179,7 @@ M2Lib::DataElement* M2Lib::M2::GetAttachments()
 		return &attachmentChunk->Elements[SKA1Chunk::EElement_Attachment];
 	if (auto attachmentChunk = ParentSkeleton ? (SKA1Chunk*)ParentSkeleton->GetChunk(ESkeletonChunk::SKA1) : NULL)
 		return &attachmentChunk->Elements[SKA1Chunk::EElement_Attachment];
-		
+
 	return &Elements[EElement_Attachment];
 }
 
@@ -2191,7 +2191,7 @@ M2Lib::SkeletonChunk::AFIDChunk* M2Lib::M2::GetSkeletonAFIDChunk()
 		return (SkeletonChunk::AFIDChunk*)chunk;
 	if (auto chunk = ParentSkeleton ? ParentSkeleton->GetChunk(ESkeletonChunk::AFID) : NULL)
 		return (SkeletonChunk::AFIDChunk*)chunk;
-	
+
 
 	return NULL;
 }
@@ -2960,7 +2960,7 @@ void M2Lib::M2::RemoveTXIDChunk()
 	auto chunk = (M2Chunk::TXIDChunk*)chunkItr->second;
 
 	uint32_t newDataLen = 0;
-	std::map<uint32_t, std::string> PathsByTextureId;
+	std::unordered_map<uint32_t, std::string> PathsByTextureId;
 
 	auto& Element = Elements[EElement_Texture];
 	for (uint32_t i = 0; i < chunk->TextureFileDataIds.size(); ++i)

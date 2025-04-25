@@ -42,6 +42,13 @@ bool M2Lib::FileStorage::ParseCsv(std::wstring const& Path)
 	if (in.fail())
 		return false;
 
+	fileInfosByNameHash.reserve(2000000);
+	fileInfosByFileDataId.reserve(2000000);
+
+	sLogger.LogInfo(L"Hello from ParseCsv");
+
+	auto startTime = std::chrono::high_resolution_clock::now();
+
 	uint32_t dwLocaleFlags = 0;
 	std::wstring line;
 	while (std::getline(in, line))
@@ -83,7 +90,12 @@ bool M2Lib::FileStorage::ParseCsv(std::wstring const& Path)
 		fileInfosByFileDataId[FileDataId] = info;
 		fileInfosByNameHash[nameHash] = info;
 	}
+
 	in.close();
+
+	auto endTime = std::chrono::high_resolution_clock::now();
+	auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(endTime - startTime).count();
+	sLogger.LogInfo(L"ParseCsv completed in %lld ms", durationMs);
 
 	return true;
 }
@@ -100,7 +112,7 @@ bool M2Lib::FileStorage::LoadStorage()
 	}
 
 	sLogger.LogInfo(L"Loaded %u mapping entries", fileInfosByFileDataId.size());
-	
+
 	return true;
 }
 

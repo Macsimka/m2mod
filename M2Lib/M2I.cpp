@@ -56,7 +56,7 @@ M2Lib::EError M2Lib::M2I::Load(wchar_t const* FileName, M2Lib::M2* pM2, bool Ign
 		if (Version >= MAKE_VERSION(4, 7))
 		{
 			pNewSubMesh->ExtraData.MaterialOverride = DataBinary.Read<int16_t>();
-			
+
 			if (Version >= MAKE_VERSION(8, 1))
 			{
 				pNewSubMesh->ExtraData.ShaderId = DataBinary.Read<int32_t>();
@@ -130,7 +130,7 @@ M2Lib::EError M2Lib::M2I::Load(wchar_t const* FileName, M2Lib::M2* pM2, bool Ign
 
 		// FMN 2015-02-13: read level
 		DataBinary.Read<uint16_t>();
-		pNewSubMesh->Level = 0; 
+		pNewSubMesh->Level = 0;
 
 		// read vertices
 		uint32_t InVertexCount = 0;
@@ -210,7 +210,7 @@ M2Lib::EError M2Lib::M2I::Load(wchar_t const* FileName, M2Lib::M2* pM2, bool Ign
 		}
 	});
 
-	std::map<uint16_t, uint16_t> BoneRemap;
+	std::unordered_map<uint16_t, uint16_t> BoneRemap;
 
 	if (!IgnoreBones)
 	{

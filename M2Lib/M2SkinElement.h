@@ -2,8 +2,7 @@
 
 #include "BaseTypes.h"
 #include "M2Types.h"
-#include <map>
-#include <unordered_set>
+#include <unordered_map>
 #include "VectorMath.h"
 
 namespace M2Lib
@@ -24,7 +23,7 @@ namespace M2Lib
 
 	namespace M2SkinElement
 	{
-		typedef std::map<uint32_t, uint32_t> TextureLookupRemap;
+		typedef std::unordered_map<uint32_t, uint32_t> TextureLookupRemap;
 
 		enum EElement
 		{

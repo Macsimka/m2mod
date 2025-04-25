@@ -236,7 +236,7 @@ bool M2Lib::M2SkinBuilder::Build(M2Skin* pResult, uint32_t BoneLoD, M2I* pM2I, C
 			if (pSubsetPartition->Triangles.empty())
 				continue;
 
-			std::map< uint16_t, uint16_t > GlobalToSkinIndexMap;
+			std::unordered_map< uint16_t, uint16_t > GlobalToSkinIndexMap;
 			uint32_t VertexCount = 0;
 			uint32_t TriangleIndexCount = 0;
 			for (uint32_t k = 0; k < pSubsetPartition->Triangles.size(); ++k)

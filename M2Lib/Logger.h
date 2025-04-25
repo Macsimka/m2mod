@@ -2,7 +2,7 @@
 
 #include "BaseTypes.h"
 #include <list>
-#include <map>
+#include <unordered_map>
 
 namespace M2Lib
 {
@@ -24,7 +24,7 @@ namespace M2Lib
 	{
 		Logger() = default;
 
-		std::map<uint8_t, std::list<LoggerCallback>> AttachedCallbacks;
+		std::unordered_map<uint8_t, std::list<LoggerCallback>> AttachedCallbacks;
 
 		void Log(int LogLevel, wchar_t const* format, va_list args);
 

@@ -14,7 +14,7 @@ namespace M2Lib
 	{
 		M2* m2 = nullptr;
 
-		std::map<CElement_SubMesh const*, std::set<uint16_t>> uniqueVerticesMap, verticesMap;
+		std::unordered_map<CElement_SubMesh const*, std::set<uint16_t>> uniqueVerticesMap, verticesMap;
 
 	public:
 		void Initialize(M2* m2)
@@ -38,7 +38,7 @@ namespace M2Lib
 			uint16_t* Triangles = m2->Skins[0]->Elements[EElement_TriangleIndex].as<uint16_t>();
 			uint16_t* Indices = m2->Skins[0]->Elements[EElement_VertexLookup].as<uint16_t>();
 
-			std::map<uint32_t, uint16_t> usageCounters;
+			std::unordered_map<uint32_t, uint16_t> usageCounters;
 
 			for (uint32_t k = TriangleIndexStart; k < TriangleIndexEnd; k += 3)
 			{
@@ -141,7 +141,7 @@ void M2Lib::M2::FixNormals(float AngularTolerance)
 		FixNormals(rule, -1/*AngularTolerance*/);
 
 	auto pSkin = Skins[0];
-	
+
 	auto allMeshes = pSkin->Elements[EElement_SubMesh].as<CElement_SubMesh>();
 	uint32_t meshCount = pSkin->Elements[EElement_SubMesh].Count;
 

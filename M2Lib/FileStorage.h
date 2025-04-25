@@ -28,8 +28,8 @@ namespace M2Lib
 		void ClearStorage();
 		bool LoadMappings();
 
-		std::map<uint32_t, FileInfo const*> fileInfosByFileDataId;
-		std::map<uint64_t, FileInfo const*> fileInfosByNameHash;
+		std::unordered_map<uint32_t, FileInfo const*> fileInfosByFileDataId;
+		std::unordered_map<uint64_t, FileInfo const*> fileInfosByNameHash;
 		std::wstring mappingsDirectory;
 
 		bool ParseCsv(std::wstring const& Path);

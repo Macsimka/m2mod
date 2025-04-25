@@ -153,7 +153,7 @@ namespace M2Lib
 				uint32_t nVertex;				// 48
 				uint32_t oVertex;
 
-				uint32_t nSkin;				// 
+				uint32_t nSkin;				//
 
 				uint32_t nColor;				// 40
 				uint32_t oColor;
@@ -239,7 +239,7 @@ namespace M2Lib
 	private:
 		std::wstring _FileName;	// needed to create skin file names so we can load/save skins.
 
-		std::map<M2Chunk::EM2Chunk, ChunkBase*> Chunks;
+		std::unordered_map<M2Chunk::EM2Chunk, ChunkBase*> Chunks;
 
 		M2Lib::Skeleton* Skeleton;
 		M2Lib::Skeleton* ParentSkeleton;
@@ -247,7 +247,7 @@ namespace M2Lib
 
 		bool needRemapReferences;
 		std::wstring remapPath;
-		std::map<uint32_t, uint32_t> remapCopyFiles;
+		std::unordered_map<uint32_t, uint32_t> remapCopyFiles;
 
 		bool needRemoveTXIDChunk; // TXID chunk will be removed when model has textures that are not indexed in CASC storage
 
@@ -260,8 +260,8 @@ namespace M2Lib
 		uint32_t GetCustomMappingCounter();
 		FileInfo const* AddCustomMapping(wchar_t const* path);
 		uint32_t currentCustomFileDataId = 0;
-		std::map<uint32_t, FileInfo const*> customFileInfosByFileDataId;
-		std::map<uint64_t, FileInfo const*> customFileInfosByNameHash;
+		std::unordered_map<uint32_t, FileInfo const*> customFileInfosByFileDataId;
+		std::unordered_map<uint64_t, FileInfo const*> customFileInfosByNameHash;
 		SaveMappingsCallback saveMappingsCallback = nullptr;
 
 		M2I* pInM2I;
@@ -298,7 +298,7 @@ namespace M2Lib
 		EError ExportM2Intermediate(wchar_t const* FileName);
 		// imports an M2I file and merges it with already loaded M2.
 		EError ImportM2Intermediate(wchar_t const* FileName);
-		
+
 		// prints diagnostic information.
 		void PrintInfo();
 		void PrintReferencedFileInfo();
@@ -404,6 +404,6 @@ namespace M2Lib
 	M2LIB_API EError __cdecl M2_AddNormalizationRule(M2LIB_HANDLE handle, int sourceType, uint32_t* sourceData, uint32_t sourceLen, int targetType, uint32_t* targetData, uint32_t targetLen, bool preferSource);
 	M2LIB_API EError __cdecl M2_SetSaveMappingsCallback(M2LIB_HANDLE handle, SaveMappingsCallback callback);
 	M2LIB_API void __cdecl M2_Free(M2LIB_HANDLE handle);
-	
+
 }
 

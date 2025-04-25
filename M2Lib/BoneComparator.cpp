@@ -20,7 +20,7 @@ M2Lib::BoneComparator::DiffResult M2Lib::BoneComparator::Diff(M2 const* oldM2, M
 	auto NewSubsetCount = NewSkin->Elements[M2SkinElement::EElement_SubMesh].Count;
 	auto NewSubsets = NewSkin->Elements[M2SkinElement::EElement_SubMesh].as<CElement_SubMesh>();
 
-	std::map<uint32_t, Candidates> OldToNewBoneMap;
+	std::unordered_map<uint32_t, Candidates> OldToNewBoneMap;
 
 	auto OldIndices = OldSkin->Elements[EElement_VertexLookup].as<uint16_t>();
 	auto NewIndices = NewSkin->Elements[EElement_VertexLookup].as<uint16_t>();

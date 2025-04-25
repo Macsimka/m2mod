@@ -14,10 +14,12 @@ uint64_t CalcJenkinsHash(const void* data, size_t nLength)
 template <class T>
 uint64_t M2Lib::CalcStringHash(std::basic_string<T> path)
 {
-	auto pathCopy = NormalizePath(path);
-	std::transform(pathCopy.begin(), pathCopy.end(), pathCopy.begin(), [](auto c) {return ::toupper(c); });
+	std::ranges::transform(path, path.begin(), [&](T c)
+	{
+		return ::toupper(normalize_char<T>(c));
+	});
 
-	return CalcJenkinsHash(pathCopy.c_str(), pathCopy.length() * sizeof(T));
+	return CalcJenkinsHash(path.c_str(), path.length() * sizeof(T));
 }
 
 template
@@ -52,7 +54,7 @@ std::basic_string<T> M2Lib::NormalizePath(std::basic_string<T> const& path)
 {
 	auto copy = path;
 
-	std::transform(copy.begin(), copy.end(), copy.begin(), normalize_char<T>);
+	std::ranges::transform(copy, copy.begin(), normalize_char<T>);
 
 	return copy;
 }
@@ -64,21 +66,15 @@ template
 std::basic_string<wchar_t> M2Lib::NormalizePath(std::basic_string<wchar_t> const& path);
 
 template <>
-std::basic_string<char> M2Lib::ToLower(std::basic_string<char> const& str)
+std::basic_string<char> M2Lib::ToLower(std::basic_string<char> str)
 {
-	auto copy = str;
-
-	std::transform(copy.begin(), copy.end(), copy.begin(), tolower);
-
+	std::ranges::transform(str, str.begin(), tolower);
 	return str;
 }
 
 template <>
-std::basic_string<wchar_t> M2Lib::ToLower(std::basic_string<wchar_t> const& str)
+std::basic_string<wchar_t> M2Lib::ToLower(std::basic_string<wchar_t> str)
 {
-	auto copy = str;
-
-	std::transform(copy.begin(), copy.end(), copy.begin(), towlower);
-
+	std::ranges::transform(str, str.begin(), towlower);
 	return str;
 }

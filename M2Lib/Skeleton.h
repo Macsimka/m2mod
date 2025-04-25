@@ -5,7 +5,7 @@
 #include "M2Types.h"
 #include "SkeletonChunk.h"
 #include <vector>
-#include <map>
+#include <unordered_map>
 
 namespace M2Lib
 {
@@ -36,6 +36,6 @@ namespace M2Lib
 		ChunkBase* GetChunk(SkeletonChunk::ESkeletonChunk ChunkId);
 
 	private:
-		std::map<SkeletonChunk::ESkeletonChunk, ChunkBase*> Chunks;
+		std::unordered_map<SkeletonChunk::ESkeletonChunk, ChunkBase*> Chunks;
 	};
 }

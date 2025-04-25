@@ -5,7 +5,6 @@
 #include "M2Skin.h"
 #include "M2I.h"
 #include <vector>
-#include <map>
 #include <assert.h>
 
 namespace M2Lib
@@ -27,7 +26,7 @@ namespace M2Lib
 			// list of bones in this partition, indices into the global bone list. later gets consolidated into the global bone lookup list.
 			std::vector< uint16_t > Bones;
 			// here we keep a map of triangle index to triangle for all triangles that have successfully been added to this bone partition. this is result caching to speed up building of subset partitions when dealing out subset triangles between subset partitions.
-			std::map< uint32_t, CTriangle* > TrianglesMap;
+			std::unordered_map< uint32_t, CTriangle* > TrianglesMap;
 
 			// offset from begining of skin's bone lookup list.
 			uint32_t BoneStart;
