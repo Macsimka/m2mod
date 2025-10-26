@@ -1,6 +1,7 @@
 #include "M2.h"
 #include "Logger.h"
 #include <set>
+#include <unordered_set>
 #include <iomanip>
 #include <sstream>
 
@@ -14,7 +15,7 @@ namespace M2Lib
 	{
 		M2* m2 = nullptr;
 
-		std::unordered_map<CElement_SubMesh const*, std::set<uint16_t>> uniqueVerticesMap, verticesMap;
+		std::unordered_map<CElement_SubMesh const*, std::unordered_set<uint16_t>> uniqueVerticesMap, verticesMap;
 
 	public:
 		void Initialize(M2* m2)
@@ -24,7 +25,7 @@ namespace M2Lib
 			verticesMap.clear();
 		}
 
-		std::set<uint16_t> const& GetEdgeVertices(CElement_SubMesh const* submesh)
+		std::unordered_set<uint16_t> const& GetEdgeVertices(CElement_SubMesh const* submesh)
 		{
 			auto cached = uniqueVerticesMap.find(submesh);
 			if (cached != uniqueVerticesMap.end())
@@ -86,7 +87,7 @@ namespace M2Lib
 			return uniqueVerticesMap[submesh];
 		}
 
-		std::set<uint16_t> const& GetVertices(CElement_SubMesh const* submesh)
+		std::unordered_set<uint16_t> const& GetVertices(CElement_SubMesh const* submesh)
 		{
 			auto cached = verticesMap.find(submesh);
 			if (cached != verticesMap.end())
@@ -181,8 +182,8 @@ void M2Lib::M2::FixNormals(NormalizationRule const& rule, float AngularTolerance
 	auto VertexCount = Elements[EElement_Vertex].Count;
 
 	uint32_t similar = 0, compared = 0;
-	// lookup hash map to make it slow af
-	std::set<uint32_t> processedVertices;
+	// Fast O(1) lookup instead of O(log N)
+	std::unordered_set<uint32_t> processedVertices;
 
 	for (uint32_t i = 0; i < meshCount; ++i)
 	{
@@ -202,7 +203,7 @@ void M2Lib::M2::FixNormals(NormalizationRule const& rule, float AngularTolerance
 
 			auto newNormal = vertexI->Normal;
 
-			std::set<uint16_t> averaged;
+			std::unordered_set<uint16_t> averaged;
 			for (uint32_t j = 0; j < meshCount; ++j)
 			{
 				auto SubmeshJ = &allMeshes[j];

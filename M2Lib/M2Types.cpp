@@ -130,7 +130,7 @@ bool M2Lib::CVertex::CompareSimilar(CVertex& A, CVertex& B, bool CompareTextures
 		}
 		else
 		{
-			if (!floatEq(A.Normal.X, B.Normal.Y) || !floatEq(A.Normal.Y, B.Normal.Y) || !floatEq(A.Normal.Z, B.Normal.Z))
+			if (!floatEq(A.Normal.X, B.Normal.X) || !floatEq(A.Normal.Y, B.Normal.Y) || !floatEq(A.Normal.Z, B.Normal.Z))
 				return false;
 		}
 	}
