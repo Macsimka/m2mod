@@ -50,7 +50,7 @@ bool M2Lib::FileStorage::ParseCsv(std::string const& Path)
 	auto startTime = std::chrono::high_resolution_clock::now();
 
 	std::string line;
-	line.reserve(512);
+	line.reserve(128);
 
 	while (std::getline(in, line))
 	{
@@ -79,31 +79,36 @@ bool M2Lib::FileStorage::ParseCsv(std::string const& Path)
 		if (fileNameLen == 0)
 			continue;
 
-		auto itr1 = fileInfosByFileDataId.find(FileDataId);
-		if (itr1 != fileInfosByFileDataId.end())
+		// Try to emplace FileDataId (one search operation instead of find + insert)
+		auto [itr1, inserted1] = fileInfosByFileDataId.try_emplace(FileDataId, nullptr);
+		if (!inserted1)
 		{
 			sLogger.LogWarning("Duplicate file storage entry '%u':'%.*s' (already used: '%u':'%s'), skipping",
 				FileDataId, static_cast<int>(fileNameLen), fileName, itr1->second->FileDataId, itr1->second->Path.c_str());
 			continue;
 		}
 
-		// Create string for hash calculation
-		std::string fileNameStr(fileName, fileNameLen);
-		auto nameHash = CalcStringHash<char>(fileNameStr);
-		auto itr2 = fileInfosByNameHash.find(nameHash);
-		if (itr2 != fileInfosByNameHash.end())
+		// Create string only after successful FileDataId check
+		auto nameHash = CalcStringHash<char>(fileName);
+
+		// Try to emplace nameHash (one search operation instead of find + insert)
+		auto [itr2, inserted2] = fileInfosByNameHash.try_emplace(nameHash, nullptr);
+		if (!inserted2)
 		{
 			sLogger.LogWarning("Duplicate file storage entry '%u':'%.*s' (already used: '%u':'%s')",
 				FileDataId, static_cast<int>(fileNameLen), fileName, itr2->second->FileDataId, itr2->second->Path.c_str());
+			// Rollback FileDataId insertion
+			fileInfosByFileDataId.erase(itr1);
 			continue;
 		}
 
-		auto info = new FileInfo(FileDataId, fileNameStr.c_str());
+		// Create FileInfo and assign to both maps
+		auto info = new FileInfo(FileDataId, fileName);
 		if (MaxFileDataId < FileDataId)
 			MaxFileDataId = FileDataId;
 
-		fileInfosByFileDataId[FileDataId] = info;
-		fileInfosByNameHash[nameHash] = info;
+		itr1->second = info;
+		itr2->second = info;
 	}
 
 	in.close();
