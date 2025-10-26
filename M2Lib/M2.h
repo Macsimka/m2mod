@@ -53,7 +53,7 @@ namespace M2Lib
 
 			bool IsMatch(uint32_t meshId) const;
 
-			void Write(std::wostream& s) const;
+			void Write(std::ostream& s) const;
 		};
 
 		int sourceRuleType;
@@ -70,7 +70,7 @@ namespace M2Lib
 
 		bool IsPreferSource() const { return preferSource; }
 
-		void Write(std::wostream& s) const;
+		void Write(std::ostream& s) const;
 	};
 
 	class NormalizationRules

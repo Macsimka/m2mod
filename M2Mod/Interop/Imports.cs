@@ -7,7 +7,7 @@ namespace M2Mod.Interop
 {
     static class Imports
     {
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern IntPtr M2_Create([In] ref Settings settings);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]

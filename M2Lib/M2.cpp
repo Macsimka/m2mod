@@ -3270,10 +3270,10 @@ bool M2Lib::NormalizationRule::RuleSet::IsMatch(uint32_t meshId) const
 	return false;
 }
 
-void M2Lib::NormalizationRule::RuleSet::Write(std::wostream& s) const
+void M2Lib::NormalizationRule::RuleSet::Write(std::ostream& s) const
 {
 	for (auto rule : rules)
-		s << std::hex << std::setw(4) << std::setfill(L'0') << rule << L" ";
+		s << std::hex << std::setw(4) << std::setfill('0') << rule << " ";
 }
 
 M2Lib::NormalizationRule::NormalizationRule(int sourceType, uint32_t* sourceData, uint32_t sourceLen, int targetType,
@@ -3297,13 +3297,13 @@ bool M2Lib::NormalizationRule::IsTargetMatch(uint32_t meshId) const
 	return targetRuleType > 0 ? (targetRuleType - 1 == GetGeosetType(meshId)) : targetRules.IsMatch(meshId);
 }
 
-void M2Lib::NormalizationRule::Write(std::wostream& s) const
+void M2Lib::NormalizationRule::Write(std::ostream& s) const
 {
-	s << L"S: " << sourceRuleType << " ";
+	s << "S: " << sourceRuleType << " ";
 	sourceRules.Write(s);
-	s << L"T: " << targetRuleType << " ";
+	s << "T: " << targetRuleType << " ";
 	targetRules.Write(s);
-	s << L"D: " << (int)preferSource;
+	s << "D: " << (int)preferSource;
 }
 
 void M2Lib::NormalizationRules::Clear()
