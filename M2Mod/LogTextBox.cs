@@ -45,6 +45,12 @@ namespace M2Mod
 
         public void AppendLine(string text, Color textColor, Color backColor)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => AppendLine(text, textColor, backColor)));
+                return;
+            }
+
             if (!UseColors)
                 textColor = backColor = Color.Empty;
 

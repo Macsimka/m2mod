@@ -147,7 +147,7 @@ namespace M2Mod
             }
         }
 
-        private void ImportButtonPreload_Click(object sender, EventArgs e)
+        private async void ImportButtonPreload_Click(object sender, EventArgs e)
         {
             ResetIgnoreWarnings();
 
@@ -177,69 +177,96 @@ namespace M2Mod
                 return;
             }
 
-            _preloadM2 = Imports.M2_Create(ref ProfileManager.CurrentProfile.Settings);
+            var inputM2ImpText = textBoxInputM2Imp.Text;
+            var inputM2IText = textBoxInputM2I.Text;
+            var replaceM2Text = textBoxReplaceM2.Text;
+            var replaceM2Checked = checkBoxReplaceM2.Checked;
+            var settings = ProfileManager.CurrentProfile.Settings;
+            var rules = ProfileManager.CurrentProfile.Configuration.NormalizationConfig.GetRules();
 
-            var Error = Imports.M2_Load(_preloadM2, textBoxInputM2Imp.Text);
-            if (Error != M2LibError.OK)
+            var result = await Task.Run(() =>
             {
-                SetStatus(Imports.GetErrorText(Error));
-                PreloadTransition(false);
-                return;
-            }
+                var preloadM2 = Imports.M2_Create(ref settings);
 
-            if (checkBoxReplaceM2.Checked)
-            {
-                Error = Imports.M2_SetReplaceM2(_preloadM2, textBoxReplaceM2.Text);
+                var Error = Imports.M2_Load(preloadM2, inputM2ImpText);
                 if (Error != M2LibError.OK)
                 {
                     SetStatus(Imports.GetErrorText(Error));
                     PreloadTransition(false);
-                    return;
+                    Imports.M2_Free(preloadM2);
+                    return (IntPtr.Zero, false);
                 }
-            }
 
-            try
-            {
-                foreach (var ruleSet in ProfileManager.CurrentProfile.Configuration.NormalizationConfig.GetRules())
+                if (replaceM2Checked)
                 {
-                    var sourceRules = ruleSet.SourceRules.Serialize().ToArray();
-                    var targetRules = ruleSet.TargetRules.Serialize().ToArray();
-
-                    Error = Imports.M2_AddNormalizationRule(_preloadM2,
-                        ruleSet.SourceType, sourceRules, sourceRules.Length,
-                        ruleSet.TargetType, targetRules, targetRules.Length, ruleSet.PreferSourceDirection);
+                    Error = Imports.M2_SetReplaceM2(preloadM2, replaceM2Text);
                     if (Error != M2LibError.OK)
                     {
                         SetStatus(Imports.GetErrorText(Error));
                         PreloadTransition(false);
-                        return;
+                        Imports.M2_Free(preloadM2);
+                        return (IntPtr.Zero, false);
                     }
                 }
-            }
-            catch (Exception ex)
+
+                try
+                {
+                    foreach (var ruleSet in rules)
+                    {
+                        var sourceRules = ruleSet.SourceRules.Serialize().ToArray();
+                        var targetRules = ruleSet.TargetRules.Serialize().ToArray();
+
+                        Error = Imports.M2_AddNormalizationRule(preloadM2,
+                            ruleSet.SourceType, sourceRules, sourceRules.Length,
+                            ruleSet.TargetType, targetRules, targetRules.Length, ruleSet.PreferSourceDirection);
+                        if (Error != M2LibError.OK)
+                        {
+                            SetStatus(Imports.GetErrorText(Error));
+                            PreloadTransition(false);
+                            Imports.M2_Free(preloadM2);
+                            return (IntPtr.Zero, false);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Invoke(new Action(() => MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)));
+                    SetStatus(ex.Message);
+                    PreloadTransition(false);
+                    Imports.M2_Free(preloadM2);
+                    return (IntPtr.Zero, false);
+                }
+
+                // import M2I
+                Error = Imports.M2_ImportM2Intermediate(preloadM2, inputM2IText);
+                if (Error != M2LibError.OK)
+                {
+                    SetStatus(Imports.GetErrorText(Error));
+                    PreloadTransition(false);
+                    Imports.M2_Free(preloadM2);
+                    return (IntPtr.Zero, false);
+                }
+
+                return (preloadM2, true);
+            });
+
+            _preloadM2 = result.Item1;
+
+            if (result.Item2)
             {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                SetStatus(ex.Message);
-                PreloadTransition(false);
-                return;
+                SetStatus("Preload finished.");
+                PreloadTransition(true);
             }
-
-            // import M2I
-            Error = Imports.M2_ImportM2Intermediate(_preloadM2, textBoxInputM2I.Text);
-            if (Error != M2LibError.OK)
-            {
-                SetStatus(Imports.GetErrorText(Error));
-                PreloadTransition(false);
-                return;
-            }
-
-            SetStatus("Preload finished.");
-
-            PreloadTransition(true);
         }
 
         private void PreloadTransition(bool On)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => PreloadTransition(On)));
+                return;
+            }
+
             if (On)
             {
                 panelInputM2Import.Enabled = false;
@@ -305,11 +332,17 @@ namespace M2Mod
 
         private void SetStatus(string status)
         {
+            if (InvokeRequired)
+            {
+                Invoke(new Action(() => SetStatus(status)));
+                return;
+            }
+
             toolStripStatusLabel1.Text = status;
             statusStrip1.Refresh();
         }
 
-        private void ExportButtonGo_Click(object sender, EventArgs e)
+        private async void ExportButtonGo_Click(object sender, EventArgs e)
         {
             ResetIgnoreWarnings();
 
@@ -332,33 +365,36 @@ namespace M2Mod
                 return;
             }
 
-            var m2 = Imports.M2_Create(ref ProfileManager.CurrentProfile.Settings);
-
-            // import M2
-            var error = Imports.M2_Load(m2, textBoxInputM2Exp.Text);
-            if (error != M2LibError.OK)
+            await Task.Run(() =>
             {
-                SetStatus(Imports.GetErrorText(error));
-                exportButtonGo.Enabled = true;
-                Imports.M2_Free(m2);
-                return;
-            }
+                var m2 = Imports.M2_Create(ref ProfileManager.CurrentProfile.Settings);
 
-            // export M2I
-            error = Imports.M2_ExportM2Intermediate(m2, textBoxOutputM2I.Text);
-            if (error != M2LibError.OK)
-            {
-                SetStatus(Imports.GetErrorText(error));
-                exportButtonGo.Enabled = true;
-                Imports.M2_Free(m2);
-                return;
-            }
+                // import M2
+                var error = Imports.M2_Load(m2, textBoxInputM2Exp.Text);
+                if (error != M2LibError.OK)
+                {
+                    SetStatus(Imports.GetErrorText(error));
+                    Invoke(new Action(() => exportButtonGo.Enabled = true));
+                    Imports.M2_Free(m2);
+                    return;
+                }
 
-            SetStatus("Export done.");
+                // export M2I
+                error = Imports.M2_ExportM2Intermediate(m2, textBoxOutputM2I.Text);
+                if (error != M2LibError.OK)
+                {
+                    SetStatus(Imports.GetErrorText(error));
+                    Invoke(new Action(() => exportButtonGo.Enabled = true));
+                    Imports.M2_Free(m2);
+                    return;
+                }
+
+                SetStatus("Export done.");
+
+                Imports.M2_Free(m2);
+            });
 
             exportButtonGo.Enabled = true;
-
-            Imports.M2_Free(m2);
         }
 
         private void ImportCancelButton_Click(object sender, EventArgs e)
@@ -409,32 +445,44 @@ namespace M2Mod
             TestFiles();
         }
 
-        private void TestFiles()
+        private async void TestFiles()
         {
-            testOutputTextBox.Text = "";
+            testOutputTextBox.Text = "Loading...";
             if (testInputTextBox.Text.Length == 0)
+            {
+                testOutputTextBox.Text = "";
                 return;
-
-            var fileStorage = Imports.FileStorage_Get(ProfileManager.CurrentProfile.Settings.MappingsDirectory);
-            if (uint.TryParse(testInputTextBox.Text, out var fileDataId))
-            {
-                var info = Imports.FileStorage_GetFileInfoByFileDataId(fileStorage, fileDataId);
-                if (info != IntPtr.Zero)
-                    testOutputTextBox.Text = Imports.FileInfo_GetPath(info);
-                else
-                    testOutputTextBox.Text = "Not found in storage";
             }
-            else
+
+            var inputText = testInputTextBox.Text;
+            var mappingsDirectory = ProfileManager.CurrentProfile.Settings.MappingsDirectory;
+
+            var result = await Task.Run(() =>
             {
-                var info = Imports.FileStorage_GetFileInfoByPartialPath(fileStorage, testInputTextBox.Text);
-                if (info != IntPtr.Zero)
+                var fileStorage = Imports.FileStorage_Get(mappingsDirectory);
+                if (uint.TryParse(inputText, out var fileDataId))
                 {
-                    testInputTextBox.Text = Imports.FileInfo_GetPath(info);
-                    testOutputTextBox.Text = Imports.FileInfo_GetFileDataId(info).ToString();
+                    var info = Imports.FileStorage_GetFileInfoByFileDataId(fileStorage, fileDataId);
+                    if (info != IntPtr.Zero)
+                        return (Imports.FileInfo_GetPath(info), null, true);
+                    else
+                        return ("Not found in storage", null, false);
                 }
                 else
-                    testOutputTextBox.Text = "Not found in storage";
-            }
+                {
+                    var info = Imports.FileStorage_GetFileInfoByPartialPath(fileStorage, inputText);
+                    if (info != IntPtr.Zero)
+                    {
+                        return (Imports.FileInfo_GetFileDataId(info).ToString(), Imports.FileInfo_GetPath(info), true);
+                    }
+                    else
+                        return ("Not found in storage", null, false);
+                }
+            });
+
+            testOutputTextBox.Text = result.Item1;
+            if (result.Item3 && result.Item2 != null)
+                testInputTextBox.Text = result.Item2;
 
             testOutputTextBox.Focus();
             testOutputTextBox.SelectAll();
@@ -557,7 +605,7 @@ namespace M2Mod
             logTextBox.Text = "";
         }
 
-        private void ImportButtonGo_Click(object sender, EventArgs e)
+        private async void ImportButtonGo_Click(object sender, EventArgs e)
         {
             ResetIgnoreWarnings();
 
@@ -573,26 +621,39 @@ namespace M2Mod
             }
 
             var fileName = Path.GetFileName(checkBoxReplaceM2.Checked ? textBoxReplaceM2.Text : textBoxInputM2Imp.Text);
-            string ExportFileName;
-            if (ProfileManager.CurrentProfile.Settings.OutputDirectory.Length > 0)
-            {
-                var outputDirectory = ProfileManager.CurrentProfile.Settings.OutputDirectory;
+            var inputM2ImpText = textBoxInputM2Imp.Text;
+            var outputDirectory = ProfileManager.CurrentProfile.Settings.OutputDirectory;
+            var mappingsDirectory = ProfileManager.CurrentProfile.Settings.MappingsDirectory;
+            var hasOutputDirectory = outputDirectory.Length > 0;
 
-                var fileStorage = Imports.FileStorage_Get(ProfileManager.CurrentProfile.Settings.MappingsDirectory);
-                var info = Imports.FileStorage_GetFileInfoByPartialPath(fileStorage, fileName);
-                if (info == IntPtr.Zero)
+            string ExportFileName = null;
+
+            if (hasOutputDirectory)
+            {
+                SetStatus("Loading listfile...");
+                var pathInfo = await Task.Run(() =>
+                {
+                    var fileStorage = Imports.FileStorage_Get(mappingsDirectory);
+                    var info = Imports.FileStorage_GetFileInfoByPartialPath(fileStorage, fileName);
+                    if (info == IntPtr.Zero)
+                        return null;
+
+                    return Imports.FileInfo_GetPath(info);
+                });
+
+                if (pathInfo == null)
                 {
                     SetStatus("Failed to determine model relative path in storage");
                     PreloadTransition(false);
                     return;
                 }
 
-                ExportFileName = Path.Combine(outputDirectory, Imports.FileInfo_GetPath(info));
+                ExportFileName = Path.Combine(outputDirectory, pathInfo);
             }
             else
             {
-                var outputDirectory = Path.Combine(Path.GetDirectoryName(textBoxInputM2Imp.Text), "Export");
-                ExportFileName = Path.Combine(outputDirectory, fileName);
+                var exportDir = Path.Combine(Path.GetDirectoryName(inputM2ImpText), "Export");
+                ExportFileName = Path.Combine(exportDir, fileName);
             }
 
             var directory = Directory.GetParent(ExportFileName).FullName;
@@ -605,8 +666,8 @@ namespace M2Mod
                 try
                 {
                     dialog.Title = "Select mappings file to append entries to";
-                    dialog.InitialDirectory = ProfileManager.CurrentProfile.Settings.MappingsDirectory;
-                    dialog.FileName = Path.GetFileNameWithoutExtension(textBoxInputM2Imp.Text) + ".txt";
+                    dialog.InitialDirectory = mappingsDirectory;
+                    dialog.FileName = Path.GetFileNameWithoutExtension(inputM2ImpText) + ".txt";
                 }
                 catch
                 {
@@ -625,11 +686,16 @@ namespace M2Mod
                 return;
             }
 
-            // export M2
-            error = Imports.M2_Save(_preloadM2, ExportFileName, SaveMask.All);
-            if (error != M2LibError.OK)
+            SetStatus("Saving M2...");
+            var saveResult = await Task.Run(() =>
             {
-                SetStatus(Imports.GetErrorText(error));
+                // export M2
+                return Imports.M2_Save(_preloadM2, ExportFileName, SaveMask.All);
+            });
+
+            if (saveResult != M2LibError.OK)
+            {
+                SetStatus(Imports.GetErrorText(saveResult));
                 PreloadTransition(false);
                 return;
             }
