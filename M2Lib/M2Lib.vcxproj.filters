@@ -149,9 +149,6 @@
     <ClCompile Include="BoneComparator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="StringHelpers.cpp">
-      <Filter>Helpers\String</Filter>
-    </ClCompile>
     <ClCompile Include="lookup3.cpp">
       <Filter>Helpers\String</Filter>
     </ClCompile>

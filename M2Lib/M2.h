@@ -38,7 +38,7 @@ namespace M2Lib
 		SAVE_ALL = SAVE_M2 | SAVE_SKIN | SAVE_SKELETON | SAVE_OTHER,
 	};
 
-	typedef wchar_t const* (__stdcall* SaveMappingsCallback)();
+	typedef char const* (__stdcall* SaveMappingsCallback)();
 
 	class NormalizationRule
 	{
@@ -237,7 +237,7 @@ namespace M2Lib
 #pragma pack(pop)
 
 	private:
-		std::wstring _FileName;	// needed to create skin file names so we can load/save skins.
+		std::string _FileName;	// needed to create skin file names so we can load/save skins.
 
 		std::unordered_map<M2Chunk::EM2Chunk, ChunkBase*> Chunks;
 
@@ -246,7 +246,7 @@ namespace M2Lib
 		bool hasLodSkins;
 
 		bool needRemapReferences;
-		std::wstring remapPath;
+		std::string remapPath;
 		std::unordered_map<uint32_t, uint32_t> remapCopyFiles;
 
 		bool needRemoveTXIDChunk; // TXID chunk will be removed when model has textures that are not indexed in CASC storage
@@ -258,7 +258,7 @@ namespace M2Lib
 		FileStorage* storageRef = nullptr;
 
 		uint32_t GetCustomMappingCounter();
-		FileInfo const* AddCustomMapping(wchar_t const* path);
+		FileInfo const* AddCustomMapping(char const* path);
 		uint32_t currentCustomFileDataId = 0;
 		std::unordered_map<uint32_t, FileInfo const*> customFileInfosByFileDataId;
 		std::unordered_map<uint64_t, FileInfo const*> customFileInfosByNameHash;
@@ -272,7 +272,7 @@ namespace M2Lib
 		DataElement Elements[M2Element::EElement__CountM2__];
 		uint32_t GetLastElementIndex() const;
 		M2Lib::Settings const* GetSettings() const;
-		wchar_t const* GetFileName() const { return _FileName.c_str(); }
+		char const* GetFileName() const { return _FileName.c_str(); }
 
 #define SKIN_COUNT 7
 		#define LOD_SKIN_MAX_COUNT 3
@@ -287,33 +287,33 @@ namespace M2Lib
 		Expansion GetExpansion() const;
 
 		// loads an M2 from a file.
-		EError Load(const wchar_t* FileName);
+		EError Load(const char* FileName);
 
-		EError SetReplaceM2(const wchar_t* FileName);
+		EError SetReplaceM2(const char* FileName);
 
 		// saves this M2 to a file.
-		EError Save(const wchar_t* FileName, uint8_t saveMask);
+		EError Save(const char* FileName, uint8_t saveMask);
 
 		// exports the loaded M2 as an M2I file.
-		EError ExportM2Intermediate(wchar_t const* FileName);
+		EError ExportM2Intermediate(char const* FileName);
 		// imports an M2I file and merges it with already loaded M2.
-		EError ImportM2Intermediate(wchar_t const* FileName);
+		EError ImportM2Intermediate(char const* FileName);
 
 		// prints diagnostic information.
 		void PrintInfo();
 		void PrintReferencedFileInfo();
 
-		bool RemapReferences(const wchar_t* m2FileName);
-		void CopyRemappedFiles(const wchar_t* m2FileName);
+		bool RemapReferences(const char* m2FileName);
+		void CopyRemappedFiles(const char* m2FileName);
 
 		uint32_t AddBone(M2Element::CElement_Bone const& Bone);
 		uint32_t AddTexture(M2Element::CElement_Texture::ETextureType Type, M2Element::CElement_Texture::ETextureFlags Flags, char const* szTextureSource);
 		uint32_t AddTextureLookup(uint16_t TextureId, bool ForceNewIndex = false);
 		uint32_t GetTextureIndex(M2Element::CElement_Texture::ETextureType Type, const char* szTextureSource);
-		std::wstring GetTexturePath(uint32_t Index);
+		std::string GetTexturePath(uint32_t Index);
 		void RemoveTXIDChunk();
 		EError SetNeedRemoveTXIDChunk();
-		EError SetNeedRemapReferences(const wchar_t* remapPath);
+		EError SetNeedRemapReferences(const char* remapPath);
 		EError AddNormalizationRule(int sourceType, uint32_t* sourceData, uint32_t sourceLen, int targetType, uint32_t* targetData, uint32_t targetLen, bool preferSource);
 		EError SetSaveMappingsCallback(SaveMappingsCallback callback);
 
@@ -351,17 +351,16 @@ namespace M2Lib
 		uint32_t AddTextureFlags(M2Element::CElement_TextureFlag::EFlags Flags, M2Element::CElement_TextureFlag::EBlend Blend);
 
 		EError LoadSkins();
-		EError SaveSkins(wchar_t const* M2FileName);
+		EError SaveSkins(char const* M2FileName);
 
-		bool GetFileSkin(std::wstring& SkinFileNameResultBuffer, std::wstring const& M2FileName, uint32_t SkinIndex, bool Save);
-		bool GetFileSkeleton(std::wstring& SkeletonFileNameResultBuffer, std::wstring const& M2FileName, bool Save);
-		bool GetFileParentSkeleton(std::wstring& SkeletonFileNameResultBuffer, std::wstring const& M2FileName, bool Save) const;
-		std::wstring BuildFsPath(std::wstring const& path);
+		bool GetFileSkin(std::string& SkinFileNameResultBuffer, std::string const& M2FileName, uint32_t SkinIndex, bool Save);
+		bool GetFileSkeleton(std::string& SkeletonFileNameResultBuffer, std::string const& M2FileName, bool Save);
+		bool GetFileParentSkeleton(std::string& SkeletonFileNameResultBuffer, std::string const& M2FileName, bool Save) const;
 
 		EError LoadSkeleton();
-		EError SaveSkeleton(std::wstring const& M2FileName);
+		EError SaveSkeleton(std::string const& M2FileName);
 
-		EError SaveCustomMappings(wchar_t const* fileName);
+		EError SaveCustomMappings(char const* fileName);
 
 		ChunkBase* GetChunk(M2Chunk::EM2Chunk ChunkId);
 		void RemoveChunk(M2Chunk::EM2Chunk ChunkId);
@@ -387,19 +386,19 @@ namespace M2Lib
 		void m_SaveElements_CopyElementsToHeader();
 
 		FileInfo const* GetFileInfoByFileDataId(uint32_t FileDataId) const;
-		FileInfo const* GetFileInfoByPath(std::wstring const& Path) const;
-		FileInfo const* GetFileInfoByPartialPath(std::wstring const& Path) const;
-		wchar_t const* PathInfo(uint32_t FileDataId) const;
+		FileInfo const* GetFileInfoByPath(std::string const& Path) const;
+		FileInfo const* GetFileInfoByPartialPath(std::string const& Path) const;
+		char const* PathInfo(uint32_t FileDataId) const;
 	};
 
 
 	M2LIB_API M2LIB_HANDLE __cdecl M2_Create(Settings* settings = nullptr);
-	M2LIB_API EError __cdecl M2_Load(M2LIB_HANDLE handle, const wchar_t* FileName);
-	M2LIB_API EError __cdecl M2_Save(M2LIB_HANDLE handle, const wchar_t* FileName, uint8_t saveMask);
-	M2LIB_API EError __cdecl M2_SetReplaceM2(M2LIB_HANDLE handle, const wchar_t* FileName);
-	M2LIB_API EError __cdecl M2_ExportM2Intermediate(M2LIB_HANDLE handle, const wchar_t* FileName);
-	M2LIB_API EError __cdecl M2_ImportM2Intermediate(M2LIB_HANDLE handle, const wchar_t* FileName);
-	M2LIB_API EError __cdecl M2_SetNeedRemapReferences(M2LIB_HANDLE handle, const wchar_t* remapPath);
+	M2LIB_API EError __cdecl M2_Load(M2LIB_HANDLE handle, const char* FileName);
+	M2LIB_API EError __cdecl M2_Save(M2LIB_HANDLE handle, const char* FileName, uint8_t saveMask);
+	M2LIB_API EError __cdecl M2_SetReplaceM2(M2LIB_HANDLE handle, const char* FileName);
+	M2LIB_API EError __cdecl M2_ExportM2Intermediate(M2LIB_HANDLE handle, const char* FileName);
+	M2LIB_API EError __cdecl M2_ImportM2Intermediate(M2LIB_HANDLE handle, const char* FileName);
+	M2LIB_API EError __cdecl M2_SetNeedRemapReferences(M2LIB_HANDLE handle, const char* remapPath);
 	M2LIB_API EError __cdecl M2_SetNeedRemoveTXIDChunk(M2LIB_HANDLE handle);
 	M2LIB_API EError __cdecl M2_AddNormalizationRule(M2LIB_HANDLE handle, int sourceType, uint32_t* sourceData, uint32_t sourceLen, int targetType, uint32_t* targetData, uint32_t targetLen, bool preferSource);
 	M2LIB_API EError __cdecl M2_SetSaveMappingsCallback(M2LIB_HANDLE handle, SaveMappingsCallback callback);

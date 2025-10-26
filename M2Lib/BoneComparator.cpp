@@ -159,36 +159,36 @@ M2Lib::BoneComparator::ComparatorWrapper::ComparatorWrapper(M2 const* oldM2, M2 
 	diffMap = diff.map;
 	compareStatus = GetDifferenceStatus(diffMap, weightThreshold);
 
-	std::wstringstream ss;
+	std::stringstream ss;
 
 	if (compareStatus == CompareStatus::Identical)
 	{
-		ss << L"# Old and new model bones are identical" << std::rendl;
+		ss << "# Old and new model bones are identical" << std::rendl;
 		buffer = ss.str();
 		return;
 	}
 
 	if (compareStatus == CompareStatus::IdenticalWithinThreshold)
 	{
-		ss << L"# Old and new model bones are identical within given threshold " << std::setprecision(2) << weightThreshold << std::rendl;
+		ss << "# Old and new model bones are identical within given threshold " << std::setprecision(2) << weightThreshold << std::rendl;
 		buffer = ss.str();
 		return;
 	}
 
-	ss << L"# Old M2: " << oldM2->GetFileName() << std::rendl;
-	ss << L"# New M2: " << newM2->GetFileName() << std::rendl;
-	ss << L"# Weight threshold: " << std::setprecision(2) << weightThreshold << std::rendl;
-	ss << L"# Source scale: " << std::setprecision(3) << sourceScale << (predictScale ? " (predicted)" : "") << std::rendl;
-	ss << L"# Matched vertices: " << diff.matchedPercent * 100.0f << '%' << std::rendl;
-	ss << L"# Use this file with Blender" << std::rendl;
-	ss << L"# " << std::rendl;
-	ss << L"# Output [old bone]: [new bone #1] (probability weight) [new bone #2] (probability weight) ..." << std::rendl;
-	ss << L"# To use this file in Blender you MUST remove extra bone candidates to make sure only one bone present" << std::rendl;
-	ss << L"# Bring contents to format: [old bone]: [new bone]" << std::rendl;
-	ss << L"# E.g.:" << std::rendl;
-	ss << L"# 13: 14" << std::rendl;
-	ss << L"#" << std::rendl;
-	ss << L"# If any <no candidate> lines present - remove, but most likely you won't be able to use this file for conversion" << std::rendl;
+	ss << "# Old M2: " << oldM2->GetFileName() << std::rendl;
+	ss << "# New M2: " << newM2->GetFileName() << std::rendl;
+	ss << "# Weight threshold: " << std::setprecision(2) << weightThreshold << std::rendl;
+	ss << "# Source scale: " << std::setprecision(3) << sourceScale << (predictScale ? " (predicted)" : "") << std::rendl;
+	ss << "# Matched vertices: " << diff.matchedPercent * 100.0f << '%' << std::rendl;
+	ss << "# Use this file with Blender" << std::rendl;
+	ss << "# " << std::rendl;
+	ss << "# Output [old bone]: [new bone #1] (probability weight) [new bone #2] (probability weight) ..." << std::rendl;
+	ss << "# To use this file in Blender you MUST remove extra bone candidates to make sure only one bone present" << std::rendl;
+	ss << "# Bring contents to format: [old bone]: [new bone]" << std::rendl;
+	ss << "# E.g.:" << std::rendl;
+	ss << "# 13: 14" << std::rendl;
+	ss << "#" << std::rendl;
+	ss << "# If any <no candidate> lines present - remove, but most likely you won't be able to use this file for conversion" << std::rendl;
 
 	for (auto itr : diffMap)
 	{
@@ -197,7 +197,7 @@ M2Lib::BoneComparator::ComparatorWrapper::ComparatorWrapper(M2 const* oldM2, M2 
 		if (weighted.size() == 1 && weighted.begin()->first == itr.first)
 			continue;
 
-		ss << std::to_wstring(itr.first) << ": ";
+		ss << std::to_string(itr.first) << ": ";
 
 		for (auto itr = weighted.begin(); itr != weighted.end();)
 		{
@@ -208,7 +208,7 @@ M2Lib::BoneComparator::ComparatorWrapper::ComparatorWrapper(M2 const* oldM2, M2 
 		}
 
 		if (weighted.empty())
-			ss << L"<no candidate>";
+			ss << "<no candidate>";
 		else
 		{
 			typedef std::pair<uint16_t, float> tty;
@@ -223,7 +223,7 @@ M2Lib::BoneComparator::ComparatorWrapper::ComparatorWrapper(M2 const* oldM2, M2 
 
 			for (auto candidate : sorted)
 			{
-				ss << std::to_wstring(candidate.first);
+				ss << std::to_string(candidate.first);
 				if (sorted.size() > 1)
 					ss << "(" << std::setprecision(2) << candidate.second << ")";
 				ss << " ";
@@ -240,7 +240,7 @@ M2Lib::BoneComparator::CompareStatus M2Lib::BoneComparator::ComparatorWrapper::G
 	return compareStatus;
 }
 
-const wchar_t* M2Lib::BoneComparator::ComparatorWrapper::GetStringResult() const
+const char* M2Lib::BoneComparator::ComparatorWrapper::GetStringResult() const
 {
 	return buffer.c_str();
 }
@@ -284,7 +284,7 @@ M2LIB_HANDLE M2Lib::BoneComparator::Wrapper_Create(M2LIB_HANDLE oldM2, M2LIB_HAN
 	}
 	catch (std::exception & e)
 	{
-		sLogger.LogError(L"Exception: %s", StringHelpers::StringToWString(e.what()).c_str());
+		sLogger.LogError("Exception: %s", e.what());
 
 		return nullptr;
 	}
@@ -298,13 +298,13 @@ M2Lib::BoneComparator::CompareStatus M2Lib::BoneComparator::Wrapper_GetResult(M2
 	}
 	catch (std::exception & e)
 	{
-		sLogger.LogError(L"Exception: %s", StringHelpers::StringToWString(e.what()).c_str());
+		sLogger.LogError("Exception: %s", e.what());
 
 		return CompareStatus::Identical;
 	}
 }
 
-const wchar_t* M2Lib::BoneComparator::Wrapper_GetStringResult(M2LIB_HANDLE pointer)
+const char* M2Lib::BoneComparator::Wrapper_GetStringResult(M2LIB_HANDLE pointer)
 {
 	try
 	{
@@ -312,9 +312,9 @@ const wchar_t* M2Lib::BoneComparator::Wrapper_GetStringResult(M2LIB_HANDLE point
 	}
 	catch (std::exception & e)
 	{
-		sLogger.LogError(L"Exception: %s", StringHelpers::StringToWString(e.what()).c_str());
+		sLogger.LogError("Exception: %s", e.what());
 
-		return L"";
+		return "";
 	}
 }
 
@@ -326,7 +326,7 @@ uint32_t M2Lib::BoneComparator::Wrapper_DiffSize(M2LIB_HANDLE pointer)
 	}
 	catch (std::exception & e)
 	{
-		sLogger.LogError(L"Exception: %s", StringHelpers::StringToWString(e.what()).c_str());
+		sLogger.LogError("Exception: %s", e.what());
 
 		return 0;
 	}
@@ -340,6 +340,6 @@ void M2Lib::BoneComparator::Wrapper_Free(M2LIB_HANDLE pointer)
 	}
 	catch (std::exception & e)
 	{
-		sLogger.LogError(L"Exception: %s", StringHelpers::StringToWString(e.what()).c_str());
+		sLogger.LogError("Exception: %s", e.what());
 	}
 }

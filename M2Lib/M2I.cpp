@@ -9,7 +9,7 @@
 #include "FileStorage.h"
 #include "Shaders.h"
 
-M2Lib::EError M2Lib::M2I::Load(wchar_t const* FileName, M2Lib::M2* pM2, bool IgnoreBones, bool IgnoreAttachments, bool IgnoreCameras, bool IgnoreOriginalMeshIndexes)
+M2Lib::EError M2Lib::M2I::Load(char const* FileName, M2Lib::M2* pM2, bool IgnoreBones, bool IgnoreAttachments, bool IgnoreCameras, bool IgnoreOriginalMeshIndexes)
 {
 	// open file stream
 	std::fstream FileStream;
@@ -198,7 +198,7 @@ M2Lib::EError M2Lib::M2I::Load(wchar_t const* FileName, M2Lib::M2* pM2, bool Ign
 		if (submesh->ExtraData.TextureType[textureIndex] == (int16_t)M2Element::CElement_Texture::ETextureType::Final_Hardcoded && submesh->ExtraData.TextureName[textureIndex].size() <= 1)
 		{
 			if (textureIndex == 0 || submesh->ExtraData.ShaderId != -1 && GetOpCountForShader(submesh->ExtraData.ShaderId) > textureIndex)
-				sLogger.LogError(L"Submesh with id [%u] has 'hardcoded' texture type, but texture path is not set", submesh->ID);
+				sLogger.LogError("Submesh with id [%u] has 'hardcoded' texture type, but texture path is not set", submesh->ID);
 		}
 	});
 
@@ -206,7 +206,7 @@ M2Lib::EError M2Lib::M2I::Load(wchar_t const* FileName, M2Lib::M2* pM2, bool Ign
 	{
 		auto const& path = submesh->ExtraData.TextureName[textureIndex];
 		if (submesh->ExtraData.TextureType[textureIndex] == (int16_t)M2Element::CElement_Texture::ETextureType::Final_Hardcoded && path.length() > 0) {
-			sLogger.LogInfo(L"Used custom texture with path: '%s'", StringHelpers::StringToWString(path).c_str());
+			sLogger.LogInfo("Used custom texture with path: '%s'", path);
 		}
 	});
 
@@ -244,7 +244,7 @@ M2Lib::EError M2Lib::M2I::Load(wchar_t const* FileName, M2Lib::M2* pM2, bool Ign
 			}
 			else
 			{
-				sLogger.LogInfo(L"Extra bones detected: skipping");
+				sLogger.LogInfo("Extra bones detected: skipping");
 				continue;
 			}
 			/*else if (HasExtraData)

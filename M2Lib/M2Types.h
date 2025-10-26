@@ -208,7 +208,7 @@ namespace M2Lib
 		EError_FailedToLoadSkeleton_CouldNotOpenFile,
 	};
 
-	M2LIB_API wchar_t const* __cdecl GetErrorText(EError Error);
+	M2LIB_API char const* __cdecl GetErrorText(EError Error);
 
 	struct BoundaryData
 	{
@@ -216,7 +216,7 @@ namespace M2Lib
 		{
 			#define BOUNDING_VERTEX_COUNT 8
 			#define BOUNDING_TRIANGLE_COUNT 12
-			
+
 			static const int BoundingTriangleVertexMap[BOUNDING_TRIANGLE_COUNT * 3];
 
 			C3Vector BoundingVertices[BOUNDING_VERTEX_COUNT];
@@ -250,7 +250,7 @@ namespace M2Lib
 
 		int16_t TextureType[MAX_SUBMESH_TEXTURES];
 		std::string TextureName[MAX_SUBMESH_TEXTURES];
-		
+
 		int16_t RenderFlags = 0;
 		int16_t BlendMode = -1;
 

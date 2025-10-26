@@ -20,7 +20,7 @@ void M2Lib::Logger::DetachCallback(uint8_t logLevel, LoggerCallback callback)
 	}
 }
 
-void M2Lib::Logger::LogInfo(wchar_t const* format, ...)
+void M2Lib::Logger::LogInfo(char const* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -28,7 +28,7 @@ void M2Lib::Logger::LogInfo(wchar_t const* format, ...)
 	va_end(args);
 }
 
-void M2Lib::Logger::LogError(wchar_t const* format, ...)
+void M2Lib::Logger::LogError(char const* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -36,7 +36,7 @@ void M2Lib::Logger::LogError(wchar_t const* format, ...)
 	va_end(args);
 }
 
-void M2Lib::Logger::LogWarning(wchar_t const* format, ...)
+void M2Lib::Logger::LogWarning(char const* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -44,7 +44,7 @@ void M2Lib::Logger::LogWarning(wchar_t const* format, ...)
 	va_end(args);
 }
 
-void M2Lib::Logger::LogCustom(wchar_t const* format, ...)
+void M2Lib::Logger::LogCustom(char const* format, ...)
 {
 	va_list args;
 	va_start(args, format);
@@ -52,15 +52,15 @@ void M2Lib::Logger::LogCustom(wchar_t const* format, ...)
 	va_end(args);
 }
 
-void M2Lib::Logger::Log(int LogLevel, wchar_t const* format, va_list args)
+void M2Lib::Logger::Log(int LogLevel, char const* format, va_list args)
 {
 	auto itr = AttachedCallbacks.find(LogLevel);
 	if (itr == AttachedCallbacks.end())
 		return;
 
-	wchar_t text[4096];
+	char text[4096];
 
-	vswprintf_s(text, sizeof(text) / sizeof(text[0]), format, args);
+	vsprintf_s(text, std::size(text), format, args);
 
 	for (auto callback : itr->second)
 		callback(LogLevel, text);

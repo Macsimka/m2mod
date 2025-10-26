@@ -15,10 +15,10 @@ namespace M2Lib
 {
 	struct FileInfo
 	{
-		FileInfo(uint32_t FileDataId, const wchar_t* Path);
+		FileInfo(uint32_t FileDataId, const char* Path);
 
 		uint32_t FileDataId = 0;
-		std::wstring Path;
+		std::string Path;
 	};
 
 	class FileStorage
@@ -30,13 +30,13 @@ namespace M2Lib
 
 		std::unordered_map<uint32_t, FileInfo const*> fileInfosByFileDataId;
 		std::unordered_map<uint64_t, FileInfo const*> fileInfosByNameHash;
-		std::wstring mappingsDirectory;
+		std::string mappingsDirectory;
 
-		bool ParseCsv(std::wstring const& Path);
+		bool ParseCsv(std::string const& Path);
 
 	public:
-		FileStorage(std::wstring const& mappingsDirectory);
-		void SetMappingsDirectory(std::wstring const& mappingsDirectory);
+		FileStorage(std::string const& mappingsDirectory);
+		void SetMappingsDirectory(std::string const& mappingsDirectory);
 		void AddRecord(FileInfo const* record);
 		static std::filesystem::path DetectWorkingDirectory(std::filesystem::path fullPath, std::filesystem::path relativePath);
 
@@ -49,12 +49,12 @@ namespace M2Lib
 		uint32_t GetStorageSize() const { return fileInfosByFileDataId.size(); }
 		uint32_t GetMaxFileDataId() const { return MaxFileDataId; }
 
-		FileInfo const* GetFileInfoByPartialPath(std::wstring const& Name);
+		FileInfo const* GetFileInfoByPartialPath(std::string const& Name);
 		FileInfo const* GetFileInfoByFileDataId(uint32_t FileDataId);
-		FileInfo const* GetFileInfoByPath(std::wstring const& Path);
-		wchar_t const* PathInfo(uint32_t FileDataId);
+		FileInfo const* GetFileInfoByPath(std::string const& Path);
+		char const* PathInfo(uint32_t FileDataId);
 
-		static const std::wstring DefaultMappingsPath;
+		static const std::string DefaultMappingsPath;
 	};
 
 	class StorageManager
@@ -73,16 +73,16 @@ namespace M2Lib
 
 		~StorageManager();
 
-		FileStorage* GetStorage(std::wstring const& mappingDirectory);
+		FileStorage* GetStorage(std::string const& mappingDirectory);
 		void Clear();
 	};
 
-	M2LIB_API M2LIB_HANDLE __cdecl FileStorage_Get(const wchar_t* mappingsDirectory);
+	M2LIB_API M2LIB_HANDLE __cdecl FileStorage_Get(const char* mappingsDirectory);
 	M2LIB_API void __cdecl FileStorage_Clear();
-	M2LIB_API void __cdecl FileStorage_SetMappingsDirectory(M2LIB_HANDLE handle, const wchar_t* mappingsDirectory);
+	M2LIB_API void __cdecl FileStorage_SetMappingsDirectory(M2LIB_HANDLE handle, const char* mappingsDirectory);
 	M2LIB_API M2LIB_HANDLE __cdecl FileStorage_GetFileInfoByFileDataId(M2LIB_HANDLE handle, uint32_t FileDataId);
-	M2LIB_API M2LIB_HANDLE __cdecl FileStorage_GetFileInfoByPartialPath(M2LIB_HANDLE handle, wchar_t const* Path);
+	M2LIB_API M2LIB_HANDLE __cdecl FileStorage_GetFileInfoByPartialPath(M2LIB_HANDLE handle, char const* Path);
 
 	M2LIB_API uint32_t __cdecl FileInfo_GetFileDataId(M2LIB_HANDLE handle);
-	M2LIB_API wchar_t const* __cdecl FileInfo_GetPath(M2LIB_HANDLE handle);
+	M2LIB_API char const* __cdecl FileInfo_GetPath(M2LIB_HANDLE handle);
 }
