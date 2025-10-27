@@ -16,6 +16,7 @@ namespace M2Lib
 	struct FileInfo
 	{
 		FileInfo(uint32_t FileDataId, const char* Path);
+		FileInfo(uint32_t FileDataId, const char* Path, size_t length);
 
 		uint32_t FileDataId = 0;
 		std::string Path;

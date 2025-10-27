@@ -16,6 +16,15 @@ M2Lib::FileInfo::FileInfo(uint32_t FileDataId, const char* Path)
 	this->Path = NormalizePath<char>(Path);
 }
 
+M2Lib::FileInfo::FileInfo(uint32_t FileDataId, const char* Path, size_t length)
+{
+	this->FileDataId = FileDataId;
+	// CSV paths are already normalized (lowercase + forward slashes)
+	// Reserve exact size to avoid over-allocation
+	this->Path.reserve(length);
+	this->Path.assign(Path, length);
+}
+
 void M2Lib::FileStorage::ClearStorage()
 {
 	loadFailed = false;
@@ -41,9 +50,6 @@ bool M2Lib::FileStorage::ParseCsv(std::string const& Path)
 	std::ifstream in(Path, std::ios::in);
 	if (!in)
 		return false;
-
-	fileInfosByNameHash.reserve(2000000);
-	fileInfosByFileDataId.reserve(2000000);
 
 	sLogger.LogInfo("Hello from ParseCsv");
 
@@ -104,7 +110,7 @@ bool M2Lib::FileStorage::ParseCsv(std::string const& Path)
 		}
 
 		// Create FileInfo and assign to both maps
-		auto info = new FileInfo(FileDataId, fileName);
+		auto info = new FileInfo(FileDataId, fileName, fileNameLen);
 		if (MaxFileDataId < FileDataId)
 			MaxFileDataId = FileDataId;
 

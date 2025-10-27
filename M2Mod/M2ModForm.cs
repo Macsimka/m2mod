@@ -30,13 +30,7 @@ namespace M2Mod
         {
             InitializeComponent();
 
-            this.Icon = Properties.Resources.Icon;
-
-            var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            var buildDate = (new DateTime(2000, 1, 1)).AddDays(assemblyVersion.Build)
-                .AddSeconds(assemblyVersion.Revision * 2);
-
-            Text = $"M2Mod {VersionString} built at {buildDate}";
+            Icon = Properties.Resources.Icon;
 
             InitializeLogger();
 
@@ -732,6 +726,8 @@ namespace M2Mod
             }
 
             SetStatus("Import done.");
+
+            File.WriteAllBytes(Path.Combine(directory, "its_reduced_m2.custom"), []);
             PreloadTransition(false);
         }
 
