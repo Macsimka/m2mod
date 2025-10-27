@@ -24,13 +24,13 @@ char normalize_char(char value)
 	return ::tolower(value);
 }
 
-// normalize_for_hash for hashing (UPPERCASE + /)
+// normalize_for_hash for hashing (lowercase + /)
 template <class T>
 T normalize_for_hash(T value)
 {
 	if (value == '\\')
 		return '/';
-	return ::toupper(value);
+	return ::tolower(value);
 }
 
 template <class T>

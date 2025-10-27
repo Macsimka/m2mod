@@ -89,7 +89,8 @@ bool M2Lib::FileStorage::ParseCsv(std::string const& Path)
 		}
 
 		// Create string only after successful FileDataId check
-		auto nameHash = CalcStringHash<char>(fileName);
+		// CSV paths are already lowercase with forward slashes, hash directly
+		auto nameHash = CalcJenkinsHash(fileName, fileNameLen);
 
 		// Try to emplace nameHash (one search operation instead of find + insert)
 		auto [itr2, inserted2] = fileInfosByNameHash.try_emplace(nameHash, nullptr);

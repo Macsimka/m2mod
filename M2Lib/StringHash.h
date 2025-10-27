@@ -2,6 +2,8 @@
 #include <cstdint>
 #include <string>
 
+uint64_t CalcJenkinsHash(const void* data, size_t nLength);
+
 namespace M2Lib
 {
 	template <class T>
