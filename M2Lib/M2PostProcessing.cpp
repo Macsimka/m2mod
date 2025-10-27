@@ -168,7 +168,7 @@ void M2Lib::M2::FixNormals(float AngularTolerance)
 		}
 	}
 
-	sLogger.LogInfo(L"Body mesh count: %u, armor mesh count: %u", bodyMeshIds.size(), armorMeshIds.size());
+	sLogger.LogInfo("Body mesh count: %u, armor mesh count: %u", bodyMeshIds.size(), armorMeshIds.size());
 }
 
 void M2Lib::M2::FixNormals(NormalizationRule const& rule, float AngularTolerance)
@@ -191,7 +191,7 @@ void M2Lib::M2::FixNormals(NormalizationRule const& rule, float AngularTolerance
 		if (!rule.IsSourceMatch(SubmeshI->ID))
 			continue;
 
-		//sLogger.LogError(L"Mesh %u", SubmeshI->ID);
+		//sLogger.LogError("Mesh %u", SubmeshI->ID);
 		auto verticesI = triangleLookup.GetEdgeVertices(SubmeshI);
 
 		for (auto iVertex : verticesI)
@@ -265,7 +265,7 @@ void M2Lib::M2::FixNormals(NormalizationRule const& rule, float AngularTolerance
 		}
 	}
 
-	//sLogger.LogError(L"Similar vertices count: %u, compared: %u", similar, compared);
+	//sLogger.LogError("Similar vertices count: %u, compared: %u", similar, compared);
 }
 
 void M2Lib::M2::Scale(float Scale)

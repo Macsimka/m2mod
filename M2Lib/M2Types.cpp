@@ -138,62 +138,62 @@ bool M2Lib::CVertex::CompareSimilar(CVertex& A, CVertex& B, bool CompareTextures
 	return true;
 }
 
-wchar_t const* M2Lib::GetErrorText(EError Error)
+char const* M2Lib::GetErrorText(EError Error)
 {
 	switch (Error)
 	{
 		case EError_OK:
-			return L"ok";
+			return "ok";
 		case EError_FAIL:
-			return L"error: unspecified error.";
+			return "error: unspecified error.";
 		case EError_PathTooLong:
-			return L"error: file path is too long.";
+			return "error: file path is too long.";
 		case EError_FailedToLoadM2_NoFileSpecified:
-			return L"error: failed to load M2, no file was specified.";
+			return "error: failed to load M2, no file was specified.";
 		case EError_FailedToLoadM2_CouldNotOpenFile:
-			return L"error: failed to load M2, could not open file.";
+			return "error: failed to load M2, could not open file.";
 		case EError_FailedToLoadM2_FileCorrupt:
-			return L"error: failed to load M2, file is corrupt.";
+			return "error: failed to load M2, file is corrupt.";
 		case EError_FailedToLoadM2_VersionNotSupported:
-			return L"error: failed to load M2, format version is not supported.";
+			return "error: failed to load M2, format version is not supported.";
 		case EError_FailedToExportM2I_NoFileSpecified:
-			return L"error: failed to export M2I, no file was specified.";
+			return "error: failed to export M2I, no file was specified.";
 		case EError_FailedToExportM2I_CouldNotOpenFile:
-			return L"error: failed to export M2I, could not open file.";
+			return "error: failed to export M2I, could not open file.";
 		case EError_FailedToExportM2I_M2NotLoaded:
-			return L"error: failed to export M2I, no M2 was loaded.";
+			return "error: failed to export M2I, no M2 was loaded.";
 		case EError_FailedToImportM2I_NoFileSpecified:
-			return L"error: failed to import M2I, no file was specified.";
+			return "error: failed to import M2I, no file was specified.";
 		case EError_FailedToImportM2I_CouldNotOpenFile:
-			return L"error: failed to import M2I, could not open file.";
+			return "error: failed to import M2I, could not open file.";
 		case EError_FailedToImportM2I_FileCorrupt:
-			return L"error: failed to import M2I, file is corrupt.";
+			return "error: failed to import M2I, file is corrupt.";
 		case EError_FailedToImportM2I_UnsupportedVersion:
-			return L"error: failed to import M2I, version number unsupported.";
+			return "error: failed to import M2I, version number unsupported.";
 		case EError_FailedToImportM2I_TooManyVertices:
-			return L"error: failed to import M2I, it has too many vertices (more than 65535).";
+			return "error: failed to import M2I, it has too many vertices (more than 65535).";
 		case EError_FailedToImportM2I_SkinHasTooManyIndices:
-			return L"error: failed to import M2I, generated skin has too many indices (more than 65535).";
+			return "error: failed to import M2I, generated skin has too many indices (more than 65535).";
 		case EError_FailedToSaveM2:
-			return L"error: failed to save M2, unspecified error.";
+			return "error: failed to save M2, unspecified error.";
 		case EError_FailedToSaveM2_NoFileSpecified:
-			return L"error: failed to save M2, no file was specified.";
+			return "error: failed to save M2, no file was specified.";
 		case EError_FailedToLoadSKIN_NoFileSpecified:
-			return L"error: failed to load SKIN, file not specified.";
+			return "error: failed to load SKIN, file not specified.";
 		case EError_FailedToLoadSKIN_CouldNotOpenFile:
-			return L"error: failed to load SKIN, could not open file. make sure you put the M2 and skins in the same folder.";
+			return "error: failed to load SKIN, could not open file. make sure you put the M2 and skins in the same folder.";
 		case EError_FailedToLoadSKIN_FileMissingOrCorrupt:
-			return L"error: failed to load SKIN, file is missing or corrupt.";
+			return "error: failed to load SKIN, file is missing or corrupt.";
 		case EError_FailedToSaveSKIN:
-			return L"error: faled to save SKIN, unspecified error.";
+			return "error: faled to save SKIN, unspecified error.";
 		case EError_FailedToSaveSKIN_NoFileSpecified:
-			return L"error: faled to save SKIN, no file was specified.";
+			return "error: faled to save SKIN, no file was specified.";
 		case EError_FailedToSaveM2BR_Ambiguous:
-			return L"error: failed to save M2BR file, remap is ambiguous.";
+			return "error: failed to save M2BR file, remap is ambiguous.";
 		case EError_FailedToLoadSkeleton_NoFileSpecified:
-			return L"error faled to save SKELETON, no file was specified.";
+			return "error faled to save SKELETON, no file was specified.";
 		case EError_FailedToLoadSkeleton_CouldNotOpenFile:
-			return L"error: failed to load SKELETON, could not open file.";
+			return "error: failed to load SKELETON, could not open file.";
 		default:
 			break;
 	}

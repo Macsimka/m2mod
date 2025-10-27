@@ -15,7 +15,7 @@
 
 using namespace M2Lib::M2SkinElement;
 
-M2Lib::EError M2Lib::M2Skin::Load(wchar_t const* FileName)
+M2Lib::EError M2Lib::M2Skin::Load(char const* FileName)
 {
 	if (!FileName)
 		return EError_FailedToLoadSKIN_NoFileSpecified;
@@ -28,7 +28,7 @@ M2Lib::EError M2Lib::M2Skin::Load(wchar_t const* FileName)
 	if (FileStream.fail())
 		return EError_FailedToLoadSKIN_CouldNotOpenFile;
 
-	sLogger.LogInfo(L"Loading skin at %s", FileName);
+	sLogger.LogInfo("Loading skin at %s", FileName);
 
 	// find file size
 	FileStream.seekg(0, std::ios::end);
@@ -61,17 +61,17 @@ M2Lib::EError M2Lib::M2Skin::Load(wchar_t const* FileName)
 	return EError_OK;
 }
 
-M2Lib::EError M2Lib::M2Skin::Save(const wchar_t* FileName)
+M2Lib::EError M2Lib::M2Skin::Save(const char* FileName)
 {
 	auto directory = std::filesystem::path(FileName).parent_path();
 	if (!std::filesystem::is_directory(directory) && !std::filesystem::create_directories(directory))
 	{
-		sLogger.LogError(L"Failed to write to directory '%s'", directory.wstring().c_str());
+		sLogger.LogError("Failed to write to directory '%s'", directory.c_str());
 
 		return EError_FailedToSaveM2;
 	}
 
-	sLogger.LogInfo(L"Saving skin to %s", FileName);
+	sLogger.LogInfo("Saving skin to %s", FileName);
 
 	// open file stream
 	std::fstream FileStream;
@@ -132,8 +132,8 @@ void M2Lib::M2Skin::BuildVertexBoneIndices()
 				auto res = m_ReverseBoneLookup(Vertex.BoneIndices[i], &BoneLookupList[SubMesh.BoneStart], SubMesh.BoneCount);
 				if (Vertex.BoneWeights[i] && res == -1)
 				{
-					sLogger.LogError(L"%u/%u Bone index = %u, Submesh.ID = %u", iSubMesh, SubMeshListLength, Vertex.BoneIndices[i], SubMesh.ID);
-					sLogger.LogError(L"%u/%u Submesh.BoneStart = %u, Submesh.BoneCount = %u", iSubMesh, SubMeshListLength, SubMesh.BoneStart, SubMesh.BoneCount);
+					sLogger.LogError("%u/%u Bone index = %u, Submesh.ID = %u", iSubMesh, SubMeshListLength, Vertex.BoneIndices[i], SubMesh.ID);
+					sLogger.LogError("%u/%u Submesh.BoneStart = %u, Submesh.BoneCount = %u", iSubMesh, SubMeshListLength, SubMesh.BoneStart, SubMesh.BoneCount);
 					m2lib_assert(false);
 				}
 				BoneIndexList[j].BoneIndices[i] = Vertex.BoneWeights[i] ? res : i;
@@ -419,7 +419,7 @@ void M2Lib::M2Skin::GetSubMeshFlags(uint32_t SubMeshIndex, std::vector< CElement
 
 bool M2Lib::M2Skin::PrintInfo()
 {
-	std::wstring FileOut = std::filesystem::path(_FileName).replace_extension("txt");
+	std::string FileOut = std::filesystem::path(_FileName).replace_extension("txt").string();
 
 	std::fstream FileStream;
 	FileStream.open(FileOut.c_str(), std::ios::out | std::ios::trunc);
@@ -653,7 +653,7 @@ bool M2Lib::M2Skin::AddShader(uint16_t ShaderId, uint32_t const* MeshTextureIds,
 	for (auto submeshId : MeshIndexes)
 	{
 		auto& SubMesh = Submeshes[submeshId];
-		
+
 		// loop through all materials to find ones assigned to our submesh
 		for (uint32_t i = 0; i < Elements[EElement_Material].Count; ++i)
 		{
@@ -704,7 +704,7 @@ bool M2Lib::M2Skin::AddShader(uint16_t ShaderId, int16_t const* TextureTypes, st
 		{
 			if (i != 0)
 			{
-				sLogger.LogError(L"Failed to apply shader data: texture not set for op#%u (total %u ops)", i, OpCountForShader);
+				sLogger.LogError("Failed to apply shader data: texture not set for op#%u (total %u ops)", i, OpCountForShader);
 				return false;
 			}
 
@@ -774,7 +774,7 @@ void M2Lib::M2Skin::CopyMaterial(uint32_t SrcMeshIndex, uint32_t DstMeshIndex)
 {
 	auto Meshes = Elements[EElement_SubMesh].as<CElement_SubMesh>();
 	auto Materials = Elements[EElement_Material].as<CElement_Material>();
-	
+
 	CElement_Material* SrcMaterial = NULL;
 	for (uint32_t i = 0; i < Header.nMaterial; ++i)
 	{

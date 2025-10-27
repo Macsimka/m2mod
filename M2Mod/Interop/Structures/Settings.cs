@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 
 namespace M2Mod.Interop.Structures
 {
-    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
+    [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi)]
     public struct Settings
     {
         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 1024)]

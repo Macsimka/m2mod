@@ -18,7 +18,7 @@ namespace M2Lib
 		LOG_ALL = LOG_INFO | LOG_WARNING | LOG_ERROR | LOG_CUSTOM,
 	};
 
-	typedef void(__stdcall* LoggerCallback)(uint8_t LogLevel, wchar_t const*);
+	typedef void(__stdcall* LoggerCallback)(uint8_t LogLevel, char const*);
 
 	class Logger
 	{
@@ -26,7 +26,7 @@ namespace M2Lib
 
 		std::unordered_map<uint8_t, std::list<LoggerCallback>> AttachedCallbacks;
 
-		void Log(int LogLevel, wchar_t const* format, va_list args);
+		void Log(int LogLevel, char const* format, va_list args);
 
 	public:
 		static Logger& getInstance()
@@ -38,10 +38,10 @@ namespace M2Lib
 		void AttachCallback(uint8_t logLevel, LoggerCallback callback);
 		void DetachCallback(uint8_t logLevel, LoggerCallback callback);
 
-		void LogInfo(wchar_t const* format, ...);
-		void LogError(wchar_t const* format, ...);
-		void LogWarning(wchar_t const* format, ...);
-		void LogCustom(wchar_t const* format, ...);
+		void LogInfo(char const* format, ...);
+		void LogError(char const* format, ...);
+		void LogWarning(char const* format, ...);
+		void LogCustom(char const* format, ...);
 	};
 
 	M2LIB_API void __cdecl AttachLoggerCallback(uint8_t logLevel, LoggerCallback callback);

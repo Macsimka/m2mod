@@ -1,17 +1,18 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using M2Mod.Config;
+﻿using M2Mod.Config;
 using M2Mod.Dialogs;
 using M2Mod.Interop;
 using M2Mod.Interop.Structures;
 using M2Mod.Tools;
 using Newtonsoft.Json.Linq;
+using System;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Http;
+using System.Reflection;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace M2Mod
 {
@@ -22,17 +23,14 @@ namespace M2Mod
 
         private IntPtr _preloadM2 = IntPtr.Zero;
 
+        private static readonly string ListUrl = "https://github.com/wowdev/wow-listfile/releases/latest/download/community-listfile.csv";
+        private static readonly string ListFilePath = Path.Combine("mappings", "listfile.csv");
+
         public M2ModForm()
         {
             InitializeComponent();
 
-            this.Icon = Properties.Resources.Icon;
-
-            var assemblyVersion = Assembly.GetExecutingAssembly().GetName().Version;
-            var buildDate = (new DateTime(2000, 1, 1)).AddDays(assemblyVersion.Build)
-                .AddSeconds(assemblyVersion.Revision * 2);
-
-            Text = $"M2Mod {VersionString} built at {buildDate}";
+            Icon = Properties.Resources.Icon;
 
             InitializeLogger();
 
@@ -40,6 +38,8 @@ namespace M2Mod
 
             InitializeProfiles();
             InitializeFormData();
+
+            CheckListFile();
 
             formInitialized = true;
         }
@@ -52,6 +52,31 @@ namespace M2Mod
             textBoxInputM2I.Text = ProfileManager.CurrentProfile.Configuration.InputM2I;
             textBoxReplaceM2.Text = ProfileManager.CurrentProfile.Configuration.ReplaceM2;
             checkBoxReplaceM2.Checked = ProfileManager.CurrentProfile.Configuration.ReplaceM2Checked;
+        }
+
+        private void CheckListFile()
+        {
+            if (File.Exists(ListFilePath))
+            {
+                if (DateTime.Now - File.GetLastWriteTime(ListFilePath) > TimeSpan.FromDays(7))
+                {
+                    Log(LogLevel.Info, "Listfile is outdated. Removing it...");
+                    File.Delete(ListFilePath);
+                }
+            }
+
+            if (!File.Exists(ListFilePath))
+            {
+                Log(LogLevel.Info, "Downloading list file. Please wait...");
+
+                using (HttpClient httpClient = new HttpClient())
+                using (HttpResponseMessage response = httpClient.GetAsync(ListUrl).Result)
+                using (Stream contentStream = response.Content.ReadAsStreamAsync().Result)
+                using (FileStream fileStream = new FileStream(ListFilePath, FileMode.Create, FileAccess.Write, FileShare.None, 4096, true))
+                {
+                    contentStream.CopyTo(fileStream);
+                }
+            }
         }
 
         private static string VersionString => $"v{Version.Major}.{Version.Minor}.{Version.Patch}";
@@ -584,7 +609,7 @@ namespace M2Mod
                     this.Invoke(new Action(() => {
                         Log(LogLevel.Error, $"Failed to check updates: {ex.Message}");
                     }));
-                    
+
                     MessageBox.Show("Failed to check updates", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             });
@@ -701,6 +726,8 @@ namespace M2Mod
             }
 
             SetStatus("Import done.");
+
+            File.WriteAllBytes(Path.Combine(directory, "its_reduced_m2.custom"), []);
             PreloadTransition(false);
         }
 

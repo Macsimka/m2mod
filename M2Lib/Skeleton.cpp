@@ -6,13 +6,13 @@
 using namespace M2Lib;
 using namespace M2Lib::SkeletonChunk;
 
-EError Skeleton::Load(const wchar_t* FileName)
+EError Skeleton::Load(const char* FileName)
 {
 	// check path
 	if (!FileName)
 		return EError_FailedToLoadSkeleton_NoFileSpecified;
-	
-	sLogger.LogInfo(L"Loading skeleton at %s", FileName);
+
+	sLogger.LogInfo("Loading skeleton at %s", FileName);
 
 	// open file stream
 	std::fstream FileStream;
@@ -25,7 +25,7 @@ EError Skeleton::Load(const wchar_t* FileName)
 	uint32_t FileSize = (uint32_t)FileStream.tellg();
 	FileStream.seekg(0, std::ios::beg);
 
-	sLogger.LogInfo(L"Loading skeleton chunks...");
+	sLogger.LogInfo("Loading skeleton chunks...");
 	while (FileStream.tellg() < FileSize)
 	{
 		uint32_t ChunkId;
@@ -50,7 +50,7 @@ EError Skeleton::Load(const wchar_t* FileName)
 				break;
 		}
 
-		sLogger.LogInfo(L"Loaded %s skeleton chunk, size %u", ChunkIdToStr(ChunkId, false).c_str(), ChunkSize);
+		sLogger.LogInfo("Loaded %s skeleton chunk, size %u", ChunkIdToStr(ChunkId, false).c_str(), ChunkSize);
 
 		uint32_t savePos = (uint32_t)FileStream.tellg();
 		Chunk->Load(FileStream, ChunkSize);
@@ -58,12 +58,12 @@ EError Skeleton::Load(const wchar_t* FileName)
 
 		Chunks[eChunk] = Chunk;
 	}
-	sLogger.LogInfo(L"Finished loading skeleton chunks");
+	sLogger.LogInfo("Finished loading skeleton chunks");
 
 	return EError_OK;
 }
 
-EError Skeleton::Save(const wchar_t* FileName)
+EError Skeleton::Save(const char* FileName)
 {
 	// check path
 	if (!FileName)
@@ -72,7 +72,7 @@ EError Skeleton::Save(const wchar_t* FileName)
 	auto directory = std::filesystem::path(FileName).parent_path();
 	if (!std::filesystem::is_directory(directory) && !std::filesystem::create_directories(directory))
 	{
-		sLogger.LogError(L"Failed to write to directory '%s'", directory.wstring().c_str());
+		sLogger.LogError("Failed to write to directory '%s'", directory.c_str());
 
 		return EError_FailedToSaveM2;
 	}
@@ -83,7 +83,7 @@ EError Skeleton::Save(const wchar_t* FileName)
 	if (FileStream.fail())
 		return EError_FailedToSaveM2;
 
-	sLogger.LogInfo(L"Saving skeleton to %s", FileName);
+	sLogger.LogInfo("Saving skeleton to %s", FileName);
 
 	// SKS1 chunk must be loaded before other animation-dependent chunks (checked client)
 	std::list<ESkeletonChunk> ExplicitOrder = { ESkeletonChunk::SKL1, ESkeletonChunk::SKS1 };

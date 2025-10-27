@@ -8,9 +8,9 @@ namespace M2Lib
 #pragma pack(push, 1)
 	struct M2LIB_API_CLASS Settings
 	{
-		wchar_t OutputDirectory[1024];
-		wchar_t WorkingDirectory[1024];
-		wchar_t MappingsDirectory[1024];
+		char OutputDirectory[1024];
+		char WorkingDirectory[1024];
+		char MappingsDirectory[1024];
 		Expansion ForceLoadExpansion = Expansion::None;
 		uint32_t CustomFilesStartIndex = 0;
 		bool MergeBones = true;
@@ -21,20 +21,20 @@ namespace M2Lib
 		bool IgnoreOriginalMeshIndexes = false;
 		bool FixAnimationsTest = false;
 
-		void setOutputDirectory(const wchar_t* directory);
-		void setWorkingDirectory(const wchar_t* directory);
-		void setMappingsDirectory(const wchar_t* directory);
+		void setOutputDirectory(const char* directory);
+		void setWorkingDirectory(const char* directory);
+		void setMappingsDirectory(const char* directory);
 
 		Settings()
 		{
-			setOutputDirectory(L"");
-			setWorkingDirectory(L"");
-			setMappingsDirectory(L"");
+			setOutputDirectory("");
+			setWorkingDirectory("");
+			setMappingsDirectory("");
 		}
 
 		void operator=(Settings const& other);
 	};
 
-	ASSERT_SIZE(Settings, 1024 * 2 * 2 + sizeof(wchar_t) * 1024 + 4 + 7 + 4);
+	ASSERT_SIZE(Settings, 1024 * 3 + 4 + 4 + 7);
 #pragma pack(pop)
 }

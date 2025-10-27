@@ -67,7 +67,7 @@ namespace M2Lib
 
 
 	public:
-		std::wstring _FileName;
+		std::string _FileName;
 
 		CM2SkinHeader Header;
 		DataElement Elements[M2SkinElement::EElement__CountM2Skin__];
@@ -79,9 +79,9 @@ namespace M2Lib
 
 	public:
 		// loads an M2 skin from a file.
-		EError Load(const wchar_t* FileName);
+		EError Load(const char* FileName);
 		// saves this M2 skin to a file.
-		EError Save(const wchar_t* FileName);
+		EError Save(const char* FileName);
 
 		void BuildVertexBoneIndices();
 		void BuildBoundingData();
@@ -119,7 +119,7 @@ namespace M2Lib
 			struct TextureInfo
 			{
 				M2Element::CElement_Texture* pTexture;
-				std::wstring Name;
+				std::string Name;
 			};
 
 			uint32_t ID;

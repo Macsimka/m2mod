@@ -76,6 +76,7 @@
       <LanguageStandard>stdcpp23</LanguageStandard>
       <PreprocessorDefinitions>_WINDLL;M2LIB_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <IntrinsicFunctions>true</IntrinsicFunctions>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -162,7 +163,6 @@
     <ClCompile Include="Skeleton.cpp" />
     <ClCompile Include="SkeletonChunk.cpp" />
     <ClCompile Include="StringHash.cpp" />
-    <ClCompile Include="StringHelpers.cpp" />
     <ClCompile Include="VectorMath.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

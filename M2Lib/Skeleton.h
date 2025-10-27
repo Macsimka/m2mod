@@ -30,8 +30,8 @@ namespace M2Lib
 				delete chunk.second;
 		}
 
-		EError Load(const wchar_t* FileName);
-		EError Save(const wchar_t* FileName);
+		EError Load(const char* FileName);
+		EError Save(const char* FileName);
 
 		ChunkBase* GetChunk(SkeletonChunk::ESkeletonChunk ChunkId);
 

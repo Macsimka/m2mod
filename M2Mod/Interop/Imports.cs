@@ -7,25 +7,23 @@ namespace M2Mod.Interop
 {
     static class Imports
     {
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Unicode)]
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern IntPtr M2_Create([In] ref Settings settings);
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern M2LibError M2_Load(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)] string filePath);
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern M2LibError M2_Load(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string filePath);
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern M2LibError M2_Save(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)]string filePath, SaveMask saveMask);
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern M2LibError M2_Save(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string filePath, SaveMask saveMask);
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern M2LibError M2_ExportM2Intermediate(IntPtr handle,
-            [MarshalAs(UnmanagedType.LPWStr)] string filePath);
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern M2LibError M2_ExportM2Intermediate(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string filePath);
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern M2LibError M2_ImportM2Intermediate(IntPtr handle,
-            [MarshalAs(UnmanagedType.LPWStr)] string filePath);
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern M2LibError M2_ImportM2Intermediate(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string filePath);
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern M2LibError M2_SetNeedRemapReferences(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)]string filePath);
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern M2LibError M2_SetNeedRemapReferences(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string filePath);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern M2LibError M2_SetNeedRemoveTXIDChunk(IntPtr handle);
@@ -35,40 +33,40 @@ namespace M2Mod.Interop
             NormalizeRuleType sourceType, uint[] sourceData, int sourceDataLen,
             NormalizeRuleType targetType, uint[] targetData, int targetDataLen, bool preferSource);
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
         public static extern M2LibError M2_SetReplaceM2(IntPtr handle,
-            [MarshalAs(UnmanagedType.LPWStr)] string filePath);
+            [MarshalAs(UnmanagedType.LPStr)] string filePath);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void M2_Free(IntPtr handle);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ConstWCharPtrMarshaller))]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         public static extern string GetErrorText(M2LibError errNo);
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr FileStorage_Get([MarshalAs(UnmanagedType.LPWStr)] string mappingsDirectory);
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern IntPtr FileStorage_Get([MarshalAs(UnmanagedType.LPStr)] string mappingsDirectory);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void FileStorage_Clear();
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void FileStorage_SetMappingsDirectory(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)] string mappingsDirectory);
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern void FileStorage_SetMappingsDirectory(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)] string mappingsDirectory);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern IntPtr FileStorage_GetFileInfoByFileDataId(IntPtr handle, uint fileDataId);
 
-        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern IntPtr FileStorage_GetFileInfoByPartialPath(IntPtr handle, [MarshalAs(UnmanagedType.LPWStr)]string path);
+        [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl, CharSet = CharSet.Ansi)]
+        public static extern IntPtr FileStorage_GetFileInfoByPartialPath(IntPtr handle, [MarshalAs(UnmanagedType.LPStr)]string path);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern uint FileInfo_GetFileDataId(IntPtr pointer);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ConstWCharPtrMarshaller))]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         public static extern string FileInfo_GetPath(IntPtr pointer);
 
-        public delegate void LoggerDelegate(LogLevel logLevel, [MarshalAs(UnmanagedType.LPWStr)]string message);
+        public delegate void LoggerDelegate(LogLevel logLevel, [MarshalAs(UnmanagedType.LPStr)]string message);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void AttachLoggerCallback(LogLevel logLevel, LoggerDelegate callback);
@@ -83,7 +81,7 @@ namespace M2Mod.Interop
         public static extern CompareStatus Wrapper_GetResult(IntPtr pointer);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
-        [return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef = typeof(ConstWCharPtrMarshaller))]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         public static extern string Wrapper_GetStringResult(IntPtr pointer);
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
@@ -92,7 +90,7 @@ namespace M2Mod.Interop
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern void Wrapper_Free(IntPtr pointer);
 
-        [return: MarshalAs(UnmanagedType.LPWStr)]
+        [return: MarshalAs(UnmanagedType.LPStr)]
         public delegate string SaveMappingsDelegate();
 
         [DllImport("M2Lib.dll", CallingConvention = CallingConvention.Cdecl)]
